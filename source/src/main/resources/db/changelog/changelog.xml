@@ -1,0 +1,213 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+
+    <changeSet id="1" author="mgerasimchuk">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <sequenceExists sequenceName="drones_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="drones_seq"/>
+    </changeSet>
+
+    <changeSet id="2" author="mgerasimchuk">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="drones"/>
+            </not>
+        </preConditions>
+        <createTable tableName="drones">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="version" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="drone_id" type="UUID">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="number" type="varchar">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="model" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="weight_limit" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_state_update" type="timestamptz"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="mgerasimchuk">
+        <preConditions>
+            <not>
+                <sequenceExists sequenceName="capacities_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="capacities_seq"/>
+    </changeSet>
+
+    <changeSet id="4" author="mgerasimchuk">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="drone_battery_capacities"/>
+            </not>
+        </preConditions>
+        <createTable tableName="drone_battery_capacities">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="drone_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="current_capacity" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_charge_date" type="timestamptz"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="5" author="mgerasimchuk">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <sequenceExists sequenceName="cargo_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="cargo_seq"/>
+    </changeSet>
+
+    <changeSet id="6" author="mgerasimcuk">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="cargo"/>
+            </not>
+        </preConditions>
+        <createTable tableName="cargo">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="drone_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="drone_fk"
+                             referencedTableName="drones"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="cargo_id" type="UUID">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="type" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="weight" type="real">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="count" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="7" author="mgerasimchuk">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <sequenceExists sequenceName="battery_audit_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="battery_audit_seq"/>
+    </changeSet>
+
+    <changeSet id="8" author="mgerasimchuk">
+        <preConditions>
+            <not>
+                <tableExists tableName="drone_battery_capacity_audit"/>
+            </not>
+        </preConditions>
+        <createTable tableName="drone_battery_capacity_audit">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="drone_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="check_date_time" type="timestamptz">
+                <constraints nullable="false"/>
+            </column>
+            <column name="battery_capacity" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="9" author="mgerasimchuk">
+        <preConditions>
+            <not>
+                <sequenceExists sequenceName="cargo_audit_seq"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="cargo_audit_seq"/>
+    </changeSet>
+
+    <changeSet id="10" author="mgerasimcuk">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="cargo_audit"/>
+            </not>
+        </preConditions>
+        <createTable tableName="cargo_audit">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="cargo_id" type="UUID">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="drone_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="state" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="weight" type="real">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="image" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="count" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+
+
+</databaseChangeLog>
